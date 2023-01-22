@@ -1,21 +1,26 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Broadcasting\Broadcasters\Broadcaster;
+use Illuminate\Broadcasting\BroadcastManager;
 use Illuminate\Support\ServiceProvider;
 
-class BroadcastServiceProvider extends ServiceProvider
+final class BroadcastServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
      *
-     * @return void
      */
-    public function boot()
+    public function boot(BroadcastManager $broadcastManager, Broadcaster $broadcaster): void
     {
-        Broadcast::routes();
+        $broadcastManager->routes();
 
-        require base_path('routes/channels.php');
+        // TODO: Complete implementation once Doctrine is setup.
+        $broadcaster->channel('User.{id}', function () {
+
+            return true;
+        });
     }
 }
