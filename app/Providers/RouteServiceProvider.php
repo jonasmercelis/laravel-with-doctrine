@@ -6,7 +6,6 @@ namespace App\Providers;
 use App\Entities\User;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
-use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -81,16 +80,16 @@ final class RouteServiceProvider extends ServiceProvider
                 $router->get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
                 $router->post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
             });
+
+            $router->middleware('auth')->group(function (Router $router) {
+
+                $router->delete('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+            });
         });
     }
 
     private function mapApiRoutes(Router $router): void
     {
-        $router->get('test', function () {
-
-            return ['jonas' => 'cool'];
-        });
-
         $router->middleware('auth:sanctum')->group(function (Router $router) {
 
             $router->get('/user', function (Request $request) {

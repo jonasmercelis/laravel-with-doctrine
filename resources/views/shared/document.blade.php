@@ -16,7 +16,9 @@
 <div>
     <div style="display: flex; justify-content: space-between;">
         @guest
-            <div></div>
+            <div>
+                Not logged in.
+            </div>
             <div>
                 <a href="{{ route('login') }}">Login</a>
             </div>
@@ -26,7 +28,17 @@
                 <b>Logged in as: </b> {{ auth()->user() }}
             </div>
             <div>
-                <a href="#">Logout</a>
+                <a
+                    href="#"
+                    onclick="return confirm('Confirm logout:') ?
+                    document.getElementById('logoutForm').submit()
+                    : false"
+                >Logout</a>
+                <form id="logoutForm" method="post" action="{{ route('logout') }}">
+                    @csrf
+                    {{-- Spoof the delete method in order to reach the correct route. --}}
+                    @method('DELETE')
+                </form>
             </div>
         @endauth
     </div>
