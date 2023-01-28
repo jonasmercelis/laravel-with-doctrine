@@ -30,7 +30,7 @@
             <div>
                 <a
                     href="#"
-                    onclick="return confirm('Zeker?') ?
+                    onclick="return confirm('Confirm logout:') ?
                     document.getElementById('logoutForm').submit()
                     : false"
                 >Logout</a>
