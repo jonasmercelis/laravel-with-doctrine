@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
 use Doctrine\ORM\ORMSetup;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Env;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
@@ -27,18 +28,21 @@ final class DoctrineService implements DoctrineServiceInterface
     private readonly LoggerInterface $logger;
     private readonly Env $environment;
     private readonly CacheItemPoolInterface $cache;
+    private readonly Application $app;
 
     public function __construct(
         DatabaseServiceInterface $databaseService,
         Env $environment,
         LoggerInterface $logger,
-        CacheItemPoolInterface $cache
+        CacheItemPoolInterface $cache,
+        Application $app
     )
     {
         $this->databaseService = $databaseService;
         $this->environment = $environment;
         $this->logger = $logger;
         $this->cache = $cache;
+        $this->app = $app;
     }
 
     /**
@@ -72,7 +76,7 @@ final class DoctrineService implements DoctrineServiceInterface
 
         $configuration->setQueryCache($queryCache);
         $configuration->setMetadataCache($metadataCache);
-        $configuration->setProxyDir(dirname(__FILE__, 3) . DIRECTORY_SEPARATOR . 'storage/proxies');
+        $configuration->setProxyDir($this->app->storagePath('doctrine'));
         $configuration->setProxyNamespace('DoctrineProxies');
 
         $connection = DriverManager::getConnection(
