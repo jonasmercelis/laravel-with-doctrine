@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Entities\User;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
+use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -20,7 +23,7 @@ final class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/';
 
     private readonly RateLimiter $rateLimiter;
 
@@ -60,17 +63,34 @@ final class RouteServiceProvider extends ServiceProvider
         // given that entity properties MUST be protected or private.
         // This is probably solved by using the designated getter method.
         $this->rateLimiter->for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+
+            /** @var User|null $user */
+            $user = $request->user();
+            return Limit::perMinute(60)->by($user?->getAuthIdentifier() ?: $request->ip());
         });
     }
 
     private function mapWebRoutes(Router $router): void
     {
         $router->get('/', [HomeController::class, 'index']);
+
+        $router->group(['prefix' => 'auth'], function (Router $router) {
+
+            $router->middleware('guest')->group(function (Router $router) {
+
+                $router->get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
+                $router->post('login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+            });
+        });
     }
 
     private function mapApiRoutes(Router $router): void
     {
+        $router->get('test', function () {
+
+            return ['jonas' => 'cool'];
+        });
+
         $router->middleware('auth:sanctum')->group(function (Router $router) {
 
             $router->get('/user', function (Request $request) {
