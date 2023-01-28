@@ -8,8 +8,10 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 final class AuthenticatedSessionController extends AbstractController
 {
@@ -33,5 +35,18 @@ final class AuthenticatedSessionController extends AbstractController
         $request->authenticate();
         $request->session()->regenerate();
         return redirect()->intended(RouteServiceProvider::HOME);
+    }
+
+    /**
+     * Logs out the authenticated user for guard web.
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $this->auth->guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }
