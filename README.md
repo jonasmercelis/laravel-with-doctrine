@@ -24,7 +24,7 @@ https://laravel.com
 ## How to run this application
 This project is set up with Laravel Sail, so all external dependencies such as database, Redis, etc. are automatically setup with Docker.
 
-1) Make sure the latest version of [Docker](https://www.docker.com) a Git are installed on your system.
+1) Make sure the latest version of [Docker](https://www.docker.com) and Git are installed on your system.
 2) Clone this repository to a folder local on your system.
 3) Go to the root of the just cloned repository.
 4) Then, copy the .env.example file to .env `cp .env.example .env`
