@@ -2,7 +2,7 @@
 
 The purpose of this project is only educative.
 
-The goal is to make Doctrine ORM work with Laravel instead of the standard build-in ORM; Eloquent, while enabling as many features of Laravel as possible (authentication, authorization, Octane, Passport, etc ..) Some features of Laravel are tightly coupled with the standard ORM, so those will be skipped.
+The goal is to make Doctrine ORM work with Laravel instead of the standard build-in ORM, Eloquent, while enabling as many features of Laravel as possible (authentication, authorization, Octane, Passport, etc ..) Some features of Laravel are tightly coupled with the standard ORM, so those will be skipped.
 
 https://www.doctrine-project.org/projects/doctrine-orm/en/2.14/index.html  
 https://laravel.com
