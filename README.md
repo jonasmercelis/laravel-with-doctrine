@@ -52,4 +52,8 @@ Finish by rebuilding the application container:
 then `./vendor/bin/sail down && ./vendor/bin/sail up -d`
 It is possible that restarting the containers without rebuilding the images is sufficient.
 
-
+### Create a test user.
+A user can be created for test purposes (and of course, to login into the system) with the following command:  
+`./vendor/bin/sail artisan user:create`  
+By default, this command will create a user with email 'test@test.com' and with password '123'.
+This behaviour can be tweaked by passing an argument after the command with the desired username. The option `--password=` can be added to specify the password.
