@@ -22,7 +22,7 @@ https://laravel.com
 | Octane                                      | Todo     |
 
 ## How to run this application
-This project is set up with Laravel Sail, so all external dependencies such as database, Redis, etc. are automatically setup with Docker.
+This project is set up with Laravel Sail, so all external dependencies such as database, Redis, etc. are automatically set up with Docker.
 
 1) Make sure the latest version of [Docker](https://www.docker.com) and Git are installed on your system.
 2) Clone this repository to a folder local on your system.
