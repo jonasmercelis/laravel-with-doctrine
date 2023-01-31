@@ -4,7 +4,10 @@ namespace App\Providers;
 
 use App\Infrastructure\Doctrine\DoctrineService;
 use App\Infrastructure\Doctrine\DoctrineServiceInterface;
+use Clockwork\Clockwork;
+use Clockwork\DataSource\DoctrineDataSource;
 use Doctrine\ORM\EntityManagerInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,9 +35,20 @@ final class DoctrineServiceProvider extends ServiceProvider
     /**
      * Bootstrap services.
      *
+     * @throws BindingResolutionException
      */
-    public function boot(DoctrineServiceInterface $doctrineService): void
+    public function boot(DoctrineServiceInterface $doctrineService, Application $app, Clockwork $clockwork): void
     {
         $doctrineService->initialize();
+
+        /** @var EntityManagerInterface $em */
+        $em = $app->make(EntityManagerInterface::class);
+
+        if ($app->environment() !== 'prod') {
+
+            $clockwork->addDataSource(
+                new DoctrineDataSource($em)
+            );
+        }
     }
 }

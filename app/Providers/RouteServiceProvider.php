@@ -6,6 +6,7 @@ namespace App\Providers;
 use App\Entities\User;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ArticleController;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -86,6 +87,13 @@ final class RouteServiceProvider extends ServiceProvider
                 $router->delete('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
             });
         });
+
+        $router->get('articles', [ArticleController::class, 'index'])->name('articles.index');
+        $router->get('articles/create', [ArticleController::class, 'create'])->name('articles.create');
+        $router->post('articles', [ArticleController::class, 'store'])->name('articles.store');
+        $router->get('articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+        $router->get('/articles/{slug}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+        $router->patch('/articles/{id}', [ArticleController::class, 'update'])->name('articles.update');
     }
 
     private function mapApiRoutes(Router $router): void
