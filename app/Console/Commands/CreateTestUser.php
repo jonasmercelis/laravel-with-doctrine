@@ -6,8 +6,6 @@ use App\Entities\User;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Console\Command;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Console\Application;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Contracts\Routing\UrlGenerator;
 
