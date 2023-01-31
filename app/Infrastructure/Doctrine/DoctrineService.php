@@ -5,7 +5,7 @@ namespace App\Infrastructure\Doctrine;
 use App\Infrastructure\Database\DatabaseServiceInterface;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
-use Doctrine\Migrations\DependencyFactory;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\MissingMappingDriverImplementation;
@@ -14,6 +14,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Env;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 final class DoctrineService implements DoctrineServiceInterface
@@ -83,6 +84,9 @@ final class DoctrineService implements DoctrineServiceInterface
             $this->databaseService->getConnectionParameters(),
             $configuration
         );
+
+        Type::addType(UuidType::NAME, UuidType::class);
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping(UuidType::NAME, 'uuid');
 
         // Create the entity manager.
         $this->entityManager = new EntityManager($connection, $configuration);
