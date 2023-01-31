@@ -3,15 +3,24 @@
 namespace App\Entities;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Stringable;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
-class User implements Authenticatable, \Stringable
+class User implements Authenticatable, Stringable
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
-    private ?int $id = null;
+    #[ORM\Id]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?Uuid $id = null;
 
     #[ORM\Column(name: 'email', type: 'string', length: 180, unique: true)]
     private string $email;
@@ -21,6 +30,15 @@ class User implements Authenticatable, \Stringable
 
     #[ORM\Column(name: 'remember_token', type: 'string', nullable: true)]
     private ?string $rememberToken = null;
+
+    /** @var Collection<int, Article> */
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Article::class)]
+    private Collection $articles;
+
+    public function __construct()
+    {
+        $this->articles = new ArrayCollection();
+    }
 
     public function getEmail(): string
     {
@@ -44,7 +62,7 @@ class User implements Authenticatable, \Stringable
     }
 
     /** @inheritDoc */
-    public function getAuthIdentifier(): ?int
+    public function getAuthIdentifier(): ?Uuid
     {
         return $this->id;
     }
@@ -71,6 +89,19 @@ class User implements Authenticatable, \Stringable
     public function getRememberTokenName(): string
     {
         return 'rememberToken';
+    }
+
+    public function setArticles(Collection $articles): void
+    {
+        $this->articles = $articles;
+    }
+
+    /**
+     * @return Collection<Article>
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
     }
 
     /** @inheritDoc */
