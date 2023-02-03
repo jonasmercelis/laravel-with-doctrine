@@ -5,6 +5,7 @@ namespace App\Providers;
 
 use App\Entities\User;
 use App\Infrastructure\Doctrine\DoctrineAuthenticationProvider;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Foundation\Application;
@@ -35,9 +36,10 @@ final class AuthServiceProvider extends ServiceProvider
         $authManager->provider('doctrine', function (Application $app) {
 
             return new DoctrineAuthenticationProvider(
-                $app->make(Hasher::class),
-                $app->make(EntityManagerInterface::class),
-                entity: User::class
+                hasher: $app->make(Hasher::class),
+                em: $app->make(EntityManagerInterface::class),
+                entity: User::class,
+                userRepository: $this->app->make(UserRepository::class)
             );
         });
     }
