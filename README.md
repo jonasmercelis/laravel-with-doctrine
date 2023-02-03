@@ -17,7 +17,7 @@ https://laravel.com
 | Authentication                              | ✅        |
 | API Authentication                          | Todo     |
 | Add instructions how to run this project.   | ✅        |
-| Basic relations between entities            | Todo     |
+| Basic relations between entities            | ✅       |
 | Authorization (Gates)                       | Todo     |
 | Octane                                      | Todo     |
 
