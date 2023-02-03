@@ -2,8 +2,10 @@
 
 namespace App\Infrastructure\Doctrine;
 
+use App\Entities\User;
+use App\Repository\Contracts\UserRepositoryInterface;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -11,34 +13,41 @@ use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
 
-final class DoctrineAuthenticationProvider implements UserProvider
+final readonly class DoctrineAuthenticationProvider implements UserProvider
 {
-    private readonly Hasher $hasher;
-    private readonly EntityManagerInterface $em;
-    private readonly string $entity;
+    private Hasher $hasher;
+    private EntityManagerInterface $em;
+    private string $entity;
+    private UserRepository $userRepository;
 
-    public function __construct(Hasher $hasher, EntityManagerInterface $em, string $entity)
+    public function __construct(
+        Hasher $hasher,
+        EntityManagerInterface $em,
+        string $entity,
+        UserRepositoryInterface $userRepository
+    )
     {
         $this->hasher = $hasher;
         $this->em = $em;
         $this->entity = $entity;
+        $this->userRepository = $userRepository;
     }
 
     /**
      * @inheritDoc
      */
-    public function retrieveById($identifier)
+    public function retrieveById($identifier): ?User
     {
-        return $this->getRepository()->find($identifier);
+        return $this->userRepository->find($identifier);
     }
 
     /**
      * @inheritDoc
      * @throws ReflectionException
      */
-    public function retrieveByToken($identifier, $token)
+    public function retrieveByToken($identifier, $token): ?User
     {
-        return $this->getRepository()->findOneBy([
+        return $this->userRepository->findOneBy([
             $this->getEntity()->getAuthIdentifierName() => $identifier,
             $this->getEntity()->getRememberTokenName()  => $token
         ]);
@@ -57,7 +66,7 @@ final class DoctrineAuthenticationProvider implements UserProvider
     /**
      * @inheritDoc
      */
-    public function retrieveByCredentials(array $credentials): ?Authenticatable
+    public function retrieveByCredentials(array $credentials): ?\App\Entities\User
     {
         $criteria = [];
         foreach ($credentials as $key => $value) {
@@ -68,7 +77,7 @@ final class DoctrineAuthenticationProvider implements UserProvider
             }
         }
 
-        return  $this->getRepository()->findOneBy($criteria);
+        return $this->userRepository->findOneBy($criteria);
     }
 
     /**
@@ -77,11 +86,6 @@ final class DoctrineAuthenticationProvider implements UserProvider
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
         return $this->hasher->check($credentials['password'], $user->getAuthPassword());
-    }
-
-    private function getRepository(): EntityRepository
-    {
-        return $this->em->getRepository($this->entity);
     }
 
     /**

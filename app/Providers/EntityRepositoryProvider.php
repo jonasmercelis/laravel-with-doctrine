@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use App\Entities\Article;
 use App\Repository\ArticleRepository;
-use App\Repository\ArticleRepositoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Illuminate\Contracts\Foundation\Application;
+use App\Repository\Contracts\ArticleRepositoryInterface;
+use App\Repository\Contracts\UserRepositoryInterface;
+use App\Repository\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class EntityRepositoryProvider extends ServiceProvider
@@ -18,15 +17,8 @@ final class EntityRepositoryProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ArticleRepositoryInterface::class, function (Application $app) {
-
-            /** @var EntityManagerInterface $em */
-            $em = $app->get(EntityManagerInterface::class);
-            return new ArticleRepository(
-                $em,
-                $em->getClassMetadata(Article::class)
-            );
-        });
+        $this->app->singleton(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->singleton(ArticleRepositoryInterface::class, ArticleRepository::class);
     }
 
     /**
