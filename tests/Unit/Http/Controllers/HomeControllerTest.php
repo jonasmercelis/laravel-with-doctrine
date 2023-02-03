@@ -3,6 +3,9 @@
 namespace Tests\Unit\Http\Controllers;
 
 use App\Http\Controllers\HomeController;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,17 +17,22 @@ final class HomeControllerTest extends TestCase
      * Test that the home controller returns a correct response.
      * @see HomeController
      */
-    public function testThatIndexReturnsExpectedResponse(): void
+    public function testThatIndexReturnsView(): void
     {
         // ===== Arrange =====
-        $sut = new HomeController();
+        $mockedView = Mockery::mock(View::class);
+        $mockedViewFactory = Mockery::mock(Factory::class);
+        $mockedViewFactory->shouldReceive('make')
+            ->once()
+            ->withArgs(['pages.home.index'])
+            ->andReturn($mockedView);
+        $sut = new HomeController($mockedViewFactory);
 
         // ===== Act =====
         $response = $sut->index();
 
         // ===== Assert =====
         $this->assertNotNull($response);
-        $this->assertInstanceOf(expected: Response::class, actual: $response);
-        $this->assertEquals(expected: 200, actual: $response->getStatusCode());
+        $this->assertInstanceOf(expected: View::class, actual: $response);
     }
 }
