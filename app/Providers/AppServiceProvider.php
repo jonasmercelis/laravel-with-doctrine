@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Repository\ArticleRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Business\Publishing\PublishingService;
+use Business\Publishing\PublishingServiceInterface;
 use Illuminate\Support\ServiceProvider;
-use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\ConverterInterface;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 
@@ -27,6 +25,8 @@ final class AppServiceProvider extends ServiceProvider
                 'allow_unsafe_links' => false,
             ]);
         });
+
+        $this->app->singleton(PublishingServiceInterface::class, PublishingService::class);
     }
 
     /**
